@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Costos</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    text-align: center;
+    padding: 20px;
+    background: #343a40;
+    color: #fff;
+  }
+  header img {
+    max-width: 200px;
+    display: block;
+    margin: 0 auto 10px;
+  }
+  .container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+  }
+  .card {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+  }
+  h3 {
+    color: #007bff;
+  }
+  label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  input, select, button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .hint {
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-bottom: 5px;
+  }
+  .calc {
+    background: #28a745;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  .calc:hover {
+    background: #218838;
+  }
+  .result {
+    margin-top: 10px;
+    padding: 10px;
+    background: #e9ecef;
+    border-radius: 5px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="imagen-proyecto.jpg" alt="Imagen del proyecto">
+  <h1>Calculadora de Costos de Producción</h1>
+  <p>Estima el costo eléctrico, de gas y de mano de obra por lote o producto</p>
+</header>
+
+<div class="container">
+
+  <!-- ELECTRICIDAD -->
+  <div class="card" id="card-electricidad">
+    <h3>Electricidad</h3>
+
+    <label for="potencia">Consumo del equipo (W)</label>
+    <input id="potencia" type="number" step="1" placeholder="Ej: 300">
+    <div class="hint">Potencia que consume el equipo, en Watts (ver etiqueta o manual).</div>
+
+    <label for="tiempoUsoElect">Duración de un lote (h)</label>
+    <input id="tiempoUsoElect" type="number" step="0.01" placeholder="Ej: 0.5">
+    <div class="hint">Tiempo que el equipo está encendido para producir un lote, en horas.</div>
+
+    <label for="frecuencia">Lotes al mes</label>
+    <input id="frecuencia" type="number" step="1" placeholder="Ej: 10">
+    <div class="hint">Cantidad de lotes que produces en un mes.</div>
+
+    <label for="precioKwh">Costo por kWh de electricidad</label>
+    <input id="precioKwh" type="number" step="0.0001" placeholder="Ej: 0.20">
+    <div class="hint">Precio por kWh según tu factura de electricidad.</div>
+
+    <div class="hint">Fórmula: (W × horas × lotes) ÷ 1000 × costo kWh</div>
+    <button class="calc" onclick="calcularElectricidad()">Calcular Electricidad</button>
+    <div id="resultadoElect" class="result" style="display:none;"></div>
+  </div>
+
+  <!-- GAS -->
+  <div class="card" id="card-gas1">
+    <h3>Gas</h3>
+
+    <label for="btuCilindro1">Capacidad total de gas del cilindro (BTU)</label>
+    <input id="btuCilindro1" type="number" step="1" value="91500">
+    <div class="hint">Valor típico para cilindro de 25 lb: 91,500 BTU.</div>
+
+    <label for="btuQuemador1">Potencia del quemador (BTU/h)</label>
+    <select id="btuQuemador1">
+      <option value="">-- Selecciona quemador --</option>
+      <option value="5000">Pequeño: 5,000–8,000 BTU/h</option>
+      <option value="9000">Mediano: 9,000–12,000 BTU/h</option>
+      <option value="15000">Grande: 15,000–18,000 BTU/h</option>
+    </select>
+    <div class="hint">Revisa las especificaciones del quemador o manual.</div>
+
+    <label for="tiempoUsoGas1">Duración de uso del quemador por lote (h)</label>
+    <input id="tiempoUsoGas1" type="number" step="0.01" placeholder="Ej: 1">
+    <div class="hint">Tiempo que el quemador está encendido para un lote.</div>
+
+    <label for="precioCilindro1">Costo de llenado del cilindro</label>
+    <input id="precioCilindro1" type="number" step="0.01" placeholder="Ej: 25.00">
+    <div class="hint">Precio que pagas por rellenar o cambiar el cilindro.</div>
+
+    <div class="hint">Fórmula: (BTU/h × horas) ÷ BTU cilindro × costo cilindro</div>
+    <button class="calc" onclick="calcularGas(1)">Calcular Gas</button>
+    <div id="resultadoGas1" class="result" style="display:none;"></div>
+  </div>
+
+  <!-- TIEMPO -->
+  <div class="card" id="card-tiempo">
+    <h3>Tiempo de trabajo</h3>
+
+    <label for="tiempoLoteMin">Duración total de producción por lote (min)</label>
+    <input id="tiempoLoteMin" type="number" step="0.1" placeholder="Ej: 120">
+    <div class="hint">Incluye preparación, cocción y empaquetado.</div>
+
+    <label for="cantidadProductos">Unidades producidas por lote</label>
+    <input id="cantidadProductos" type="number" step="1" placeholder="Ej: 20">
+    <div class="hint">Cantidad de piezas o productos terminados en un lote.</div>
+
+    <label for="salarioHora">Costo por hora de mano de obra</label>
+    <input id="salarioHora" type="number" step="0.01" placeholder="Ej: 8.00">
+    <div class="hint">Lo que te pagas a ti mismo o a un trabajador por hora.</div>
+
+    <div class="hint">Fórmula por producto: (min ÷ 60 ÷ unidades) × costo/hora</div>
+    <button class="calc" onclick="calcularTiempo()">Calcular Tiempo</button>
+    <div id="resultadoTiempo" class="result" style="display:none;"></div>
+  </div>
+
+</div>
+
+<script>
+function calcularElectricidad() {
+  let W = parseFloat(document.getElementById("potencia").value) || 0;
+  let horas = parseFloat(document.getElementById("tiempoUsoElect").value) || 0;
+  let lotes = parseFloat(document.getElementById("frecuencia").value) || 0;
+  let precio = parseFloat(document.getElementById("precioKwh").value) || 0;
+  let total = (W * horas * lotes / 1000) * precio;
+  document.getElementById("resultadoElect").style.display = "block";
+  document.getElementById("resultadoElect").innerText = `Costo mensual: $${total.toFixed(2)}`;
+}
+
+function calcularGas(num) {
+  let btuCil = parseFloat(document.getElementById("btuCilindro" + num).value) || 0;
+  let btuQuem = parseFloat(document.getElementById("btuQuemador" + num).value) || 0;
+  let horas = parseFloat(document.getElementById("tiempoUsoGas" + num).value) || 0;
+  let precioCil = parseFloat(document.getElementById("precioCilindro" + num).value) || 0;
+  let total = ((btuQuem * horas) / btuCil) * precioCil;
+  document.getElementById("resultadoGas" + num).style.display = "block";
+  document.getElementById("resultadoGas" + num).innerText = `Costo por lote: $${total.toFixed(2)}`;
+}
+
+function calcularTiempo() {
+  let min = parseFloat(document.getElementById("tiempoLoteMin").value) || 0;
+  let unidades = parseFloat(document.getElementById("cantidadProductos").value) || 0;
+  let salario = parseFloat(document.getElementById("salarioHora").value) || 0;
+  let total = (min / 60 / unidades) * salario;
+  document.getElementById("resultadoTiempo").style.display = "block";
+  document.getElementById("resultadoTiempo").innerText = `Costo por unidad: $${total.toFixed(2)}`;
+}
+</script>
+
+</body>
+</html>
