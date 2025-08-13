@@ -6,17 +6,18 @@
 <meta name="description" content="Calculadora de costos de producción: electricidad, gas y mano de obra por lote o producto." />
 <title>Calculadora de Costos de Producción</title>
 <style>
+  /* Tema basado en azul del logo */
   body {
     font-family: Arial, sans-serif;
-    background: #f8f9fa;
+    background: #e6f0ff; /* fondo suave azul */
     margin: 0; padding: 0;
-    color: #212529;
+    color: #003366; /* azul oscuro para texto */
   }
   header {
     text-align: center;
     padding: 2rem 1rem;
-    background: #343a40;
-    color: #fff;
+    background: #003366; /* azul oscuro */
+    color: #ffffff;
   }
   header img {
     max-width: 180px;
@@ -29,73 +30,128 @@
     padding: 0 1rem;
   }
   .card {
-    background: #fff;
-    padding: 1.25rem 1.5rem;
+    background: #ffffff;
+    padding: 1.5rem 2rem;
     margin-bottom: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgb(0 51 102 / 0.15);
     transition: box-shadow 0.3s ease;
   }
   .card:hover {
-    box-shadow: 0 4px 16px rgb(0 0 0 / 0.15);
+    box-shadow: 0 6px 20px rgb(0 51 102 / 0.25);
   }
   h3 {
-    color: #007bff;
+    color: #0059b3;
     margin-bottom: 1rem;
-    font-weight: 600;
+    font-weight: 700;
+    border-bottom: 2px solid #0059b3;
+    padding-bottom: 0.3rem;
   }
   label {
     display: block;
-    font-weight: 600;
+    font-weight: 700;
     margin-top: 1rem;
   }
   input, select, button {
     width: 100%;
-    padding: 0.5rem 0.75rem;
-    margin-top: 0.25rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    padding: 0.55rem 0.8rem;
+    margin-top: 0.3rem;
+    border-radius: 6px;
+    border: 1.5px solid #99bbff;
     font-size: 1rem;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
   }
   input:focus, select:focus {
-    border-color: #007bff;
+    border-color: #0059b3;
     outline: none;
+    box-shadow: 0 0 6px #99bbff;
   }
   button.calc {
-    background: #28a745;
-    color: #fff;
+    background: #0059b3;
+    color: #ffffff;
     border: none;
     cursor: pointer;
     margin-top: 1rem;
     font-weight: 700;
     font-size: 1.1rem;
-    border-radius: 6px;
+    border-radius: 8px;
     transition: background-color 0.3s ease;
   }
   button.calc:hover, button.calc:focus {
-    background: #218838;
+    background: #003366;
+  }
+  button.clear {
+    background: #e60000;
+    margin-top: 0.5rem;
+    font-weight: 700;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    width: auto;
+    padding: 0.45rem 1rem;
+    transition: background-color 0.3s ease;
+  }
+  button.clear:hover, button.clear:focus {
+    background: #990000;
+  }
+  button.copy {
+    background: #007acc;
+    margin-top: 0.5rem;
+    font-weight: 700;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    width: auto;
+    padding: 0.45rem 1rem;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+  }
+  button.copy:hover, button.copy:focus {
+    background: #005f99;
   }
   .hint {
     font-size: 0.85rem;
-    color: #6c757d;
+    color: #0059b3;
     margin-top: 0.25rem;
   }
   .result {
     margin-top: 1rem;
     padding: 1rem;
-    background: #e9ecef;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #212529;
-    min-height: 2em;
+    background: #cce0ff;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #003366;
+    min-height: 2.3em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   .error {
-    color: #dc3545;
-    font-weight: 600;
+    color: #cc0000;
+    font-weight: 700;
     margin-top: 0.5rem;
+  }
+  .result-text {
+    flex-grow: 1;
+  }
+  .button-group {
+    display: flex;
+    align-items: center;
+  }
+  @media (max-width: 480px) {
+    .button-group {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    button.copy {
+      margin-left: 0;
+    }
   }
 </style>
 </head>
@@ -131,7 +187,13 @@
 
     <div class="hint">Fórmula: (W × horas × lotes) ÷ 1000 × costo kWh</div>
     <button class="calc" type="button" onclick="calcularElectricidad()">Calcular Electricidad</button>
-    <div id="resultadoElect" class="result" aria-live="polite"></div>
+    <div class="result" aria-live="polite" id="resultadoElect">
+      <span class="result-text"></span>
+      <div class="button-group" style="display:none;">
+        <button class="copy" type="button" onclick="copiarResultado('resultadoElect')">Copiar</button>
+        <button class="clear" type="button" onclick="limpiarSeccion('electricidad')">Limpiar</button>
+      </div>
+    </div>
   </section>
 
   <!-- GAS -->
@@ -161,7 +223,13 @@
 
     <div class="hint">Fórmula: (BTU/h × horas) ÷ BTU cilindro × costo cilindro</div>
     <button class="calc" type="button" onclick="calcularGas(1)">Calcular Gas</button>
-    <div id="resultadoGas1" class="result" aria-live="polite"></div>
+    <div class="result" aria-live="polite" id="resultadoGas1">
+      <span class="result-text"></span>
+      <div class="button-group" style="display:none;">
+        <button class="copy" type="button" onclick="copiarResultado('resultadoGas1')">Copiar</button>
+        <button class="clear" type="button" onclick="limpiarSeccion('gas1')">Limpiar</button>
+      </div>
+    </div>
   </section>
 
   <!-- TIEMPO -->
@@ -182,13 +250,19 @@
 
     <div class="hint">Fórmula por producto: (min ÷ 60 ÷ unidades) × costo/hora</div>
     <button class="calc" type="button" onclick="calcularTiempo()">Calcular Tiempo</button>
-    <div id="resultadoTiempo" class="result" aria-live="polite"></div>
+    <div class="result" aria-live="polite" id="resultadoTiempo">
+      <span class="result-text"></span>
+      <div class="button-group" style="display:none;">
+        <button class="copy" type="button" onclick="copiarResultado('resultadoTiempo')">Copiar</button>
+        <button class="clear" type="button" onclick="limpiarSeccion('tiempo')">Limpiar</button>
+      </div>
+    </div>
   </section>
 
 </main>
 
 <script>
-  // Función para validar que los campos sean positivos y no nulos
+  // Validar campos (min inclusive)
   function validarCampos(campos) {
     for (const {id, nombre, min} of campos) {
       const valor = parseFloat(document.getElementById(id).value);
@@ -199,17 +273,76 @@
     return null;
   }
 
+  // Mostrar resultado, activar botones copiar y limpiar
   function mostrarResultado(id, mensaje, isError = false) {
     const div = document.getElementById(id);
-    div.style.display = "block";
-    div.textContent = mensaje;
+    const texto = div.querySelector('.result-text');
+    const botones = div.querySelector('.button-group');
+
+    texto.textContent = mensaje;
+    div.style.display = "flex";
     if (isError) {
       div.classList.add("error");
+      if (botones) botones.style.display = "none";
     } else {
       div.classList.remove("error");
+      if (botones) botones.style.display = "flex";
     }
   }
 
+  // Limpiar resultados y inputs de una sección
+  function limpiarSeccion(seccion) {
+    let inputs;
+    let resultadoDiv;
+    switch(seccion) {
+      case 'electricidad':
+        inputs = ['potencia','tiempoUsoElect','frecuencia','precioKwh'];
+        resultadoDiv = 'resultadoElect';
+        break;
+      case 'gas1':
+        inputs = ['btuCilindro1','btuQuemador1','tiempoUsoGas1','precioCilindro1'];
+        resultadoDiv = 'resultadoGas1';
+        break;
+      case 'tiempo':
+        inputs = ['tiempoLoteMin','cantidadProductos','salarioHora'];
+        resultadoDiv = 'resultadoTiempo';
+        break;
+      default:
+        return;
+    }
+    inputs.forEach(id => {
+      const el = document.getElementById(id);
+      if(el.tagName.toLowerCase() === 'select'){
+        el.selectedIndex = 0;
+      } else {
+        el.value = '';
+      }
+    });
+    const div = document.getElementById(resultadoDiv);
+    if(div){
+      div.style.display = 'none';
+      const texto = div.querySelector('.result-text');
+      if(texto) texto.textContent = '';
+      const botones = div.querySelector('.button-group');
+      if(botones) botones.style.display = 'none';
+      div.classList.remove('error');
+    }
+  }
+
+  // Copiar texto resultado al portapapeles
+  function copiarResultado(id) {
+    const div = document.getElementById(id);
+    const texto = div.querySelector('.result-text').textContent;
+    if (!texto) return alert('No hay resultado para copiar.');
+
+    navigator.clipboard.writeText(texto).then(() => {
+      alert('Resultado copiado al portapapeles.');
+    }).catch(() => {
+      alert('No se pudo copiar el texto.');
+    });
+  }
+
+  // Cálculos con validación y mostrar resultado
   function calcularElectricidad() {
     const campos = [
       {id: "potencia", nombre: "Consumo del equipo (W)", min: 0.1},
